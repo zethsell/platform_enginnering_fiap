@@ -36,8 +36,8 @@ resource "random_shuffle" "random_subnet" {
 }
 
 resource "aws_elb" "web" {
-  name    = "${terraform.workspace}-example-elb"
   count   = "${var.LOAD_BALANCE_NODES}"
+  name    = "${format("elb-${terraform.workspace}-%03d", count.index + 1)}"
   subnets = data.aws_subnets.all.ids
   security_groups = ["${aws_security_group.allow-ssh.id}"]
 
@@ -89,6 +89,6 @@ resource "aws_instance" "web" {
   }
 
   tags = {
-    Name = "${format("nginx-%03d", count.index + 1)}"
+    Name = "${format("nginx-${terraform.workspace}-%03d", count.index + 1)}"
   }
 }
